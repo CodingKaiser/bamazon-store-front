@@ -48,7 +48,7 @@ class BamazonManager {
         name: "itemAmountAdded",
         validate: (input) => {
           return parseInt(input) > 0;
-        }
+        },
       }
     ]).then((res) => {
       this.db.updateQuantityOfItem(res.itemName, parseInt(res.itemAmountAdded));

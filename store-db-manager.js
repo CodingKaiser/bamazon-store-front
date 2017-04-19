@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+require('console.table');
 
 class StoreDbManager {
   constructor(dbName, table, parent) {
@@ -27,27 +28,16 @@ class StoreDbManager {
     if (displayOnlyLowStockItems) {
       this.connection.query("select * from " + this.table + " where stock_quantity < 5", (err, data) => {
         if (err) console.log(err);
-        console.log("\nItems in the store: ");
-        for (var item of data) {
-          if (item.stock_quantity < 5) {
-            console.log("");
-            console.log("ID: " + item.item_id +
-                        ", " + item.product_name +
-                        ", Price: " + item.price + ", Quantity: " + item.stock_quantity);
-          }
-        }
+        console.log("");
+        console.table(data);
         console.log("");
         this.parent.promptManagerForAction();
       });
     } else {
       this.connection.query("select * from " + this.table, (err, data) => {
         console.log("\nItems in the store: ");
-        for (var item of data) {
-          console.log("");
-          console.log("ID: " + item.item_id +
-                      ", " + item.product_name +
-                      ", Price: " + item.price + ", Quantity: " + item.stock_quantity);
-        }
+        console.log("");
+        console.table(data);
         console.log("");
         this.parent.promptManagerForAction();
       });
@@ -55,22 +45,24 @@ class StoreDbManager {
   }
 
   updateQuantityOfItem(itemToUpdate, amountDifferential) {
-    this.connection.query("update " + this.table + " set ? where ?", [
-      {
-        stock_quantity: stock_quantity + updatedQuantity,
-      },
-      {
-        product_name: itemToUpdate,
-      }
-    ], (err, data) => {
-      if (err) {
-        console.log(err);
-      }
-      console.log("There are now " + updatedQuantity +
-                  " of " + itemToUpdate + " in stock.");
-      console.log(data);
-      this.parent.promptUserForAction();
-    });
+    this.connection.query("select stock_quantity from " + this.table + " where ?;", [{product_name: itemToUpdate}], (err, stockData) => {
+      var updatedQuantity = parseInt(stockData[0].stock_quantity) + amountDifferential;
+      this.connection.query("update " + this.table + " set ? where ?", [
+        {
+          stock_quantity: updatedQuantity,
+        },
+        {
+          product_name: itemToUpdate,
+        }
+      ], (err, data) => {
+        if (err) {
+          console.log(err);
+        }
+        console.log("There are now " + updatedQuantity +
+                    " of " + itemToUpdate + " in stock.");
+        this.parent.promptManagerForAction();
+      });
+    })
   }
 }
 
