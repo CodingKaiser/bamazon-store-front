@@ -1,0 +1,28 @@
+{
+  "name": "bamazon-store-front",
+  "version": "1.0.0",
+  "description": "app that allows users to check storefront and purchase items",
+  "main": "bamazonCustomer.js",
+  "dependencies": {
+    "inquirer": "^3.0.6",
+    "mysql": "^2.13.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodingKaiser/bamazon-store-front.git"
+  },
+  "keywords": [
+    "store",
+    "front"
+  ],
+  "author": "Falko Noe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CodingKaiser/bamazon-store-front/issues"
+  },
+  "homepage": "https://github.com/CodingKaiser/bamazon-store-front#readme"
+}
