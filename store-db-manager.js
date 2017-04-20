@@ -46,22 +46,40 @@ class StoreDbManager {
 
   updateQuantityOfItem(itemToUpdate, amountDifferential) {
     this.connection.query("select stock_quantity from " + this.table + " where ?;", [{product_name: itemToUpdate}], (err, stockData) => {
-      var updatedQuantity = parseInt(stockData[0].stock_quantity) + amountDifferential;
-      this.connection.query("update " + this.table + " set ? where ?", [
-        {
-          stock_quantity: updatedQuantity,
-        },
-        {
-          product_name: itemToUpdate,
-        }
-      ], (err, data) => {
-        if (err) {
-          console.log(err);
-        }
-        console.log("There are now " + updatedQuantity +
-                    " of " + itemToUpdate + " in stock.");
+      if (stockData[0]) {
+        var updatedQuantity = parseInt(stockData[0].stock_quantity) + amountDifferential;
+        this.connection.query("update " + this.table + " set ? where ?", [
+          {
+            stock_quantity: updatedQuantity,
+          },
+          {
+            product_name: itemToUpdate,
+          }
+        ], (err, data) => {
+          if (err) {
+            console.log(err);
+          }
+          console.log("There are now " + updatedQuantity +
+                      " of " + itemToUpdate + " in stock.");
+          this.parent.promptManagerForAction();
+        });
+      } else {
+        console.log("");
+        console.log("Sorry, the item " + itemToUpdate + " does not exist");
+        console.log("");
         this.parent.promptManagerForAction();
-      });
+      }
+    })
+  }
+
+  addNewItem(name, department, stock, price) {
+    this.connection.query("insert into " + this.table + " set ?", {product_name: name, department_name: department, price: price, stock_quantity: stock}, (err, results, fields) => {
+      if (!err) {
+        console.log("New item successfully added.");
+      } else {
+        console.log("There was an error adding item: " + name);
+      }
+      this.parent.promptManagerForAction();
     })
   }
 }

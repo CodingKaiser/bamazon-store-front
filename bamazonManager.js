@@ -56,7 +56,42 @@ class BamazonManager {
   }
 
   addNewProduct() {
-
+    inquirer.prompt([
+      {
+        type: "input",
+        message: "Please type in the name of the item you would like to add",
+        name: "itemName",
+        validate: (input) => {
+          return input.length > 1;
+        },
+      },
+      {
+        type: "input",
+        message: "Please type in the item's department name",
+        name: "department",
+        validate: (input) => {
+          return input.length > 1;
+        },
+      },
+      {
+        type: "input",
+        message: "Type in the amount of stock",
+        name: "stock",
+        validate: (input) => {
+          return parseInt(input) > 0;
+        },
+      },
+      {
+        type: "input",
+        message: "Type in the price",
+        name: "price",
+        validate: (input) => {
+          return parseFloat(input) > 0.10;
+        },
+      },
+    ]).then((res) => {
+      this.db.addNewItem(res.itemName, res.department, parseInt(res.stock), parseFloat(res.price));
+    });
   }
 }
 
